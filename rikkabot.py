@@ -73,7 +73,7 @@ def help(bot, update):
     print(datetime.datetime.now(), ">>>", "Done /help", ">>>", update.message.from_user.username)
 dp.add_handler(CommandHandler("help", help))
 
-with daemon.DaemonContext():
-    run_bot(updater)
+#with daemon.DaemonContext():
+run_bot(updater)
 
 print("=====================\nUp and running!\n")
