@@ -16,3 +16,4 @@ PyYAML
 beautifulsoup4
 lxml
 python-daemon
+html2text

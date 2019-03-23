@@ -1,7 +1,12 @@
 keys:
-     telegram_token: '337307450:AAFRD82j8n764-mtrwiWPCX3GDUMnoVmrg4'
+     telegram_token: '811544504:AAG0KVEUQvjlf4j_JQHI7y5VHlW2LALs6w0'
 
 features:
+    2ch:
+        enabled: true
+        commands:
+            - 2ch
+
     dick:
         enabled: true
         commands:
