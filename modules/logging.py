@@ -9,7 +9,8 @@ def module_init(gd):
     global c, conn, db_lock
     db_lock = threading.Lock()
     path = gd.config["path"]
-    conn  = sqlite3.connect(path+"rikka.db", check_same_thread=False) 
+    conn  = sqlite3.connect(path+"rikka.db", check_same_thread=False)
+    conn.execute('CREATE TABLE IF NOT EXISTS commands (date text, user_id integer, user text, command text, chat_id integer, chat_title text)')
     c = conn.cursor()
 
 
@@ -44,7 +45,7 @@ def get_chat_info(bot, update):
 
 def log_command(bot, update, date, command):
     table_name = "commands"
-    entry_columns = "date, user_id, user, command, chat_id, chat_title" 
+    entry_columns = "date, user_id, user, command, chat_id, chat_title"
     chat_id, chat_title, user_id, user = get_chat_info(bot, update)
     values = [date, user_id, user, command, chat_id, chat_title]
     data_entry(table_name, entry_columns, values)

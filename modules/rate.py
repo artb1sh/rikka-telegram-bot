@@ -23,13 +23,7 @@ def ifint(number):
 def rate(bot, update, args):
     current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     if update.message.reply_to_message is not None:
-        if update.message.reply_to_message.text is not None:
-            args = update.message.reply_to_message.text.split(" ")
-    string = " ".join(args).lower()
-    if string == "":
-        seed()
-    else:
-        seed(string)
+        seed(update.message.reply_to_message.message_id)
     rng = random() * 10
     rounded = round(rng * 2) / 2
     rating = str(ifint(rounded))

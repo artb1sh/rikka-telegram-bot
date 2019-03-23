@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from telegram.ext import Updater, CommandHandler
 from random import randint
 import importlib
@@ -7,12 +5,7 @@ import datetime
 import yaml
 import os
 import re
-
 import logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',	
-                    level=logging.INFO)	
-logger = logging.getLogger(__name__)	
-logging.getLogger("telegram.utils.promise").propagate = False
 
 class Globals:
     def __init__(self, updater, dp, config):
@@ -20,13 +13,17 @@ class Globals:
         self.dp = dp
         self.config = config
 
-# Import logo from a text file
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',	
+                    level=logging.INFO)	
+logger = logging.getLogger(__name__)	
+logging.getLogger("telegram.utils.promise").propagate = False
+
 with open("resources/logo.txt", "r", encoding="UTF-8") as logo_file:
     logo = logo_file.read()
     print(logo)
 
-# Load configs & create folders
-with open("config.yml", "r") as f:
+with open("config.example.yml", "r") as f:
     config = yaml.load(f)
 key = config["keys"]["telegram_token"]
 updater = Updater(token=key)

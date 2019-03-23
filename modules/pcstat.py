@@ -23,6 +23,13 @@ def seconds_to_str(seconds):
 
 def status(bot, update):
     update.message.chat.send_action(ChatAction.TYPING)
+    status_text = get_status_text()
+    update.message.reply_text(status_text)
+    print(datetime.datetime.now(), ">", "/status", ">",
+          update.message.from_user.username)
+
+
+def get_status_text():
 
     # Uptime
     f = int(uptime())
@@ -67,5 +74,6 @@ def status(bot, update):
 
     # combine everything
     server_status = "💻 \nOS: " + OS + "\n" + cpu_cores + "\n" + cpu_text + "\n" + ram_text + "\n" + hdd_text + "\n" + uptime_text
-    update.message.reply_text(server_status)
-    print(datetime.datetime.now(), ">", "/status", ">", update.message.from_user.username)
+
+    return server_status
+

@@ -21,22 +21,35 @@ def tts(bot, update, args):
     filename = datetime.now().strftime("%d%m%y-%H%M%S%f")
     reply = update.message.reply_to_message
     if reply is None:
-        text = "".join(args)
+        text = " ".join(args)
     elif reply.text is not None:
         text = reply.text
+        if args:
+            lang = args[0]
+        elif text.startswith('-'):
+            splited = text.split(maxsplit=2)
+            if len(splited)==2:
+                lang = splited[0][1:]
+                text = splited[1]
+        else:
+            lang = 'en'
     else:
         return
     if len(text) == 0:
         update.message.reply_text("Type in some text ^^")
         return
+    if text.startswith('-'):
+        splited = text.split(maxsplit=2)
+        if len(splited)==2:
+            lang = splited[0][1:]
+            text = splited[1]
     update.message.chat.send_action(ChatAction.RECORD_AUDIO)
-    lang="en"
     tts = gTTS(text, lang)
     tts.save(path + filename + ".mp3")
     with open(path + filename + ".mp3", "rb") as f:
         linelist = list(f)
         linecount = len(linelist)
-    if linecount == 1:
+    if linecount == 1:  # wtf
         update.message.chat.send_action(ChatAction.RECORD_AUDIO)
         lang = "ru"
         tts = gTTS(text, lang)
