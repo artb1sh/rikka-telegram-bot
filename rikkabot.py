@@ -6,12 +6,20 @@ import yaml
 import os
 import re
 import logging
+import daemon
 
 class Globals:
     def __init__(self, updater, dp, config):
         self.updater = updater
         self.dp = dp
         self.config = config
+
+
+def run_bot(updater):
+    # Starting bot
+    updater.start_polling(clean=True, bootstrap_retries=0, read_latency=1.0)
+    # Idle
+    updater.idle()
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',	
@@ -65,9 +73,7 @@ def help(bot, update):
     print(datetime.datetime.now(), ">>>", "Done /help", ">>>", update.message.from_user.username)
 dp.add_handler(CommandHandler("help", help))
 
-# Starting bot
-updater.start_polling(clean=True, bootstrap_retries=0, read_latency=1.0)
-# Run the bot until you presses Ctrl+C
+with daemon.DaemonContext():
+    run_bot(updater)
+
 print("=====================\nUp and running!\n")
-#Idle
-updater.idle()

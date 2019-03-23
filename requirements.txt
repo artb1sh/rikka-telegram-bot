@@ -15,3 +15,4 @@ scikit_learn
 PyYAML
 beautifulsoup4
 lxml
+python-daemon
