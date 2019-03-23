@@ -2,7 +2,7 @@ keys:
      telegram_token: '811544504:AAG0KVEUQvjlf4j_JQHI7y5VHlW2LALs6w0'
 
 features:
-    2ch:
+    get_2ch_post:
         enabled: true
         commands:
             - 2ch

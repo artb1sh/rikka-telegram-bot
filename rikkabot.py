@@ -8,6 +8,10 @@ import re
 import logging
 import daemon
 
+proxy = 'https://158.69.59.171:3128'
+os.environ['HTTP_PROXY'] = proxy
+os.environ['HTTPS_PROXY'] = proxy
+
 class Globals:
     def __init__(self, updater, dp, config):
         self.updater = updater
