@@ -2,6 +2,14 @@ keys:
      telegram_token: '811544504:AAG0KVEUQvjlf4j_JQHI7y5VHlW2LALs6w0'
 
 features:
+    bing_search:
+        enabled: true
+        commands:
+            - img
+        safe_search: 'Off'
+        search_depth: 10
+        subscription_key: ==key==
+
     get_2ch_post:
         enabled: true
         commands:
@@ -39,7 +47,7 @@ features:
             - .webp
 
     google_search:
-        enabled: true
+        enabled: false
         commands_image: 
             - img
         commands_video: 
