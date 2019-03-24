@@ -39,6 +39,8 @@ def get_image(query):
         'tags': query,
     }
     response = requests.get('https://gelbooru.com/index.php', params=params)
+    if not response.text:
+        return None
     result_list = response.json()
     if not result_list:
         return None
