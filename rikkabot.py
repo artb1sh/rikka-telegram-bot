@@ -19,13 +19,6 @@ class Globals:
         self.config = config
 
 
-def run_bot(updater):
-    # Starting bot
-    updater.start_polling(clean=True, bootstrap_retries=0, read_latency=1.0)
-    # Idle
-    updater.idle()
-
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',	
                     level=logging.INFO)	
 logger = logging.getLogger(__name__)	
@@ -77,7 +70,9 @@ def help(bot, update):
     print(datetime.datetime.now(), ">>>", "Done /help", ">>>", update.message.from_user.username)
 dp.add_handler(CommandHandler("help", help))
 
-#with daemon.DaemonContext():
-run_bot(updater)
 
+# Starting bot
+updater.start_polling(clean=True, bootstrap_retries=0, read_latency=1.0)
 print("=====================\nUp and running!\n")
+# Idle
+updater.idle()
