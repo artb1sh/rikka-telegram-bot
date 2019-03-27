@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ChatAction
-from telegram.ext import CommandHandler, CallbackQueryHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.ext.dispatcher import run_async
 from modules.logging import log_command
 from datetime import datetime
-from random import randint
+import random
 import os
 
 
@@ -15,76 +15,27 @@ def module_init(gd):
     commands = gd.config["commands"]
     for command in commands:
         gd.dp.add_handler(CommandHandler(command, gif, pass_args=True))
-    gd.dp.add_handler(CallbackQueryHandler(gif_button, pattern="(gif_)\w+"))
+    gd.dp.add_handler(MessageHandler(Filters.animation, save_gif))
+
+
+def save_gif(bot, update):
+    message = update.message
+    storage_dir_path = os.path.join(path, str(message.chat.id))
+    _, extension = os.path.splitext(message.animation.file_name)
+    saved_file_name = message.animation.file_id + extension
+    saved_file_path = os.path.join(storage_dir_path, saved_file_name)
+    os.makedirs(storage_dir_path, exist_ok=True)
+    bot.getFile(message.animation.file_id).download(saved_file_path)
 
 
 @run_async
 def gif(bot, update, args):
     current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
-    folders = os.walk(path)
-    args = "gif_" + str(args)[2:-2]
-    avail_folders = next(folders)[1]
-    if args == "gif_help" or args == "gif_?":
-        reply_markup = make_keyboard(avail_folders)
-        update.message.reply_text("Available folders for /gif are:", reply_markup=reply_markup)
-    elif args in avail_folders:
-        update.message.chat.send_action(ChatAction.UPLOAD_DOCUMENT)
-        gifs_dir = path + args
-        result = getgifs(update, gifs_dir)
-        with open(gifs_dir + "/" + str(result), "rb") as f:
-            update.message.reply_document(f)
-        log_command(bot, update, current_time, "gif")
-    elif args == "gif_":
-        gifs_dir = path
-        result = getgifs(update, gifs_dir)
-        with open(gifs_dir + "/" + str(result), "rb") as f:
-            update.message.reply_document(f)
-        log_command(bot, update, current_time, "gif")
-    else:
-        update.message.reply_text("No such folder, try /gif help")
-    print(current_time, "> /gif >", update.message.from_user.username, ">", args)
-
-
-def gif_button(bot, update):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
-    query = update.callback_query
-    user = query.from_user.username
-    display_data = str(query.data)[4:]
-    bot.editMessageText(text="%s selected: %s\nUploading can take a while!"
-                        % (user, display_data),
-                        chat_id=query.message.chat_id,
-                        message_id=query.message.message_id)
-    query.message.chat.send_action(ChatAction.UPLOAD_DOCUMENT)
-    if display_data == "unsorted":
-        gifs_dir = path
-    else:
-        gifs_dir = path + query.data
-    result = getgifs(update, gifs_dir)
-    with open(gifs_dir + "/" + str(result), "rb") as f:
-        bot.sendDocument(query.message.chat_id, f)
-    print(current_time, "> /gif >", query.message.from_user.username, ">", display_data)
+    storage_dir_path = os.path.join(path, str(update.message.chat.id))
+    if not os.path.exists(storage_dir_path):
+        update.message.reply_text("I don't know any gifs!")
+    files = os.listdir(storage_dir_path)
+    result_path = os.path.join(storage_dir_path, random.choice(files))
+    with open(result_path, "rb") as f:
+        update.message.reply_document(f)
     log_command(bot, update, current_time, "gif")
-
-
-def make_keyboard(folders):
-    key_list = []
-    for i in folders:
-        key = InlineKeyboardButton(str(i)[4:], callback_data=i)
-        key_list.append(key)
-    row_split = lambda list, size, acc=[]: (row_split(list[size:], size, acc + [list[:size]]) if list else acc)
-    rows = row_split(key_list, 4)
-    root_btn = [InlineKeyboardButton("[unsorted]", callback_data="gif_unsorted")]
-    rows.insert(0, root_btn)
-    keyboard = rows
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    return reply_markup
-
-
-def getgifs(update, gifs_dir):
-    gifs = [f for f in os.listdir(gifs_dir)
-                    if os.path.isfile(os.path.join(gifs_dir, f))
-                    and f.endswith((".mp4", ".gif"))]
-    filecount = len(gifs)
-    rand = randint(0, filecount - 1)
-    result = list(gifs)[rand]
-    return result
