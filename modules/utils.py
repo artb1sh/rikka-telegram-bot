@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # get_image func courtesy of Slko
 import requests
+from html2text import html2text
 import os.path
 
 
@@ -113,3 +114,12 @@ def caption_filter(text):
 # text of choice
 def text_filter(text):
     return lambda msg: bool(text in msg.text)
+
+
+def convert_2ch_post_to_telegram(post):
+    files = post['files']
+    comment_text = html2text(post['comment'])
+    links = map(lambda file: "[file](https://2ch.hk{})".format(file['path']),
+                files)
+    message_text = '{}\n{}'.format(' '.join(links), comment_text)
+    return message_text
