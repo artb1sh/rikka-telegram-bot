@@ -20,6 +20,7 @@ def tts(bot, update, args):
     current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     filename = datetime.now().strftime("%d%m%y-%H%M%S%f")
     reply = update.message.reply_to_message
+    lang = 'ru'
     if reply is None:
         text = " ".join(args)
     elif reply.text is not None:
@@ -31,8 +32,6 @@ def tts(bot, update, args):
             if len(splited)==2:
                 lang = splited[0][1:]
                 text = splited[1]
-        else:
-            lang = 'en'
     else:
         return
     if len(text) == 0:
