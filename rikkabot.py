@@ -8,7 +8,7 @@ import re
 import logging
 import daemon
 
-proxy = 'https://158.69.59.171:3128'
+proxy = 'https://149.56.102.220:3128'
 os.environ['HTTP_PROXY'] = proxy
 os.environ['HTTPS_PROXY'] = proxy
 

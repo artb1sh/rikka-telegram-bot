@@ -8,7 +8,7 @@ features:
             - img
         safe_search: 'Off'
         search_depth: 10
-        subscription_key: ==key==
+        subscription_key: e210201a31ca461ab90ab9d6651cc503
 
     get_2ch_post:
         enabled: true
@@ -197,6 +197,12 @@ features:
         sticker_path: resources/kappa.webp
         keywords:
             - Kappa
+
+    track:
+        enabled: true
+        commands:
+            - track
+        path: userdata/
 
     toribash:
         enabled: false
