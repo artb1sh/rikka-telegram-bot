@@ -34,9 +34,13 @@ class PostsObserver(threading.Thread):
                     if posts[-1]['num'] <= last_post:
                         continue
                     updates = True
+                    thread_url = api_url[:-4] + 'html'
                     new_posts = [post for post in posts if post['num'] > last_post]
                     for post in new_posts:
-                        message_text = convert_2ch_post_to_telegram(post)
+                        message_text = convert_2ch_post_to_telegram(
+                            post,
+                            thread_url=thread_url
+                        )
                         self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
                     last_post = posts[-1]['num']
                     query =  'UPDATE tracked SET last_post=? WHERE api_url=? and chat_id=?'
