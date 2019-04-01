@@ -202,6 +202,7 @@ features:
         enabled: true
         commands:
             - track
+            - subscribe
         path: userdata/
 
     toribash:
