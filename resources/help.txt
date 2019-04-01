@@ -1,5 +1,5 @@
 /subscribe *thread_url* - subscribe to 2ch thread
-/2ch *\[board\]* - get random 2ch post
+/2ch *[board]* - get random 2ch post
 /a *tag* - get pic from yande.re
 /colors *1-10* - generate image palette
 /dick - check your dick
