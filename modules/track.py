@@ -29,23 +29,23 @@ class PostsObserver(threading.Thread):
                     self.conn.execute(query, (api_url,))
                     self.conn.commit()
                     continue
-                try:
-                    posts = api_response.json()['threads'][0]['posts']
-                    if posts[-1]['num'] <= last_post:
-                        continue
-                    updates = True
-                    new_posts = [post for post in posts if post['num'] > last_post]
-                    for post in new_posts:
-                        message_text = convert_2ch_post_to_telegram(
-                            post,
-                        )
-                        self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
-                    last_post = posts[-1]['num']
-                    query =  'UPDATE tracked SET last_post=? WHERE api_url=? and chat_id=?'
-                    self.conn.execute(query, (last_post, api_url, chat_id))
-                    self.conn.commit()
-                except Exception as e:
+                posts = api_response.json()['threads'][0]['posts']
+                if posts[-1]['num'] <= last_post:
                     continue
+                updates = True
+                new_posts = [post for post in posts if post['num'] > last_post]
+                last_post = new_posts[-1]['num']
+                query = 'UPDATE tracked SET last_post=? WHERE api_url=? and chat_id=?'
+                self.conn.execute(query, (last_post, api_url, chat_id))
+                self.conn.commit()
+                for post in new_posts:
+                    message_text = convert_2ch_post_to_telegram(
+                        post,
+                    )
+                    try:
+                        self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
+                    except Exception as e:
+                        print(e)
             if not updates:
                 time.sleep(self.interval)
 
