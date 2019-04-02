@@ -124,10 +124,12 @@ def convert_2ch_post_to_telegram(post):
     date = post['date']
     name = post['name']
     num = post['num']
-    message_text = '{files}\n{name} {date} *№{num}*\n\n{text}'.format(
+    number = post['number']
+    message_text = '{files}\n{name} {date} *№{num}* _#{number}_\n\n{text}'.format(
         name=name,
         date=date,
         num=num,
+        number=number,
         text=comment_text,
         files=' '.join(links)
     )
