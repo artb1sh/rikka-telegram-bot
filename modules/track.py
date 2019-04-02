@@ -34,7 +34,6 @@ class PostsObserver(threading.Thread):
                     if posts[-1]['num'] <= last_post:
                         continue
                     updates = True
-                    thread_url = api_url[:-4] + 'html'
                     new_posts = [post for post in posts if post['num'] > last_post]
                     for post in new_posts:
                         message_text = convert_2ch_post_to_telegram(
