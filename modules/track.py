@@ -39,7 +39,6 @@ class PostsObserver(threading.Thread):
                     for post in new_posts:
                         message_text = convert_2ch_post_to_telegram(
                             post,
-                            thread_url=thread_url
                         )
                         self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
                     last_post = posts[-1]['num']
