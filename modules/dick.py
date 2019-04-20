@@ -1,5 +1,4 @@
-from modules.logging import log_command
-from datetime import datetime
+from modules.logging import logging_decorator
 from telegram.ext import CommandHandler
 import random
 
@@ -10,13 +9,12 @@ def module_init(gd):
     sigma = gd.config['sigma']
     commands = gd.config["commands"]
     for command in commands:
-        gd.dp.add_handler(CommandHandler(command, gelbooru_search, pass_args=True))
+        gd.dp.add_handler(CommandHandler(command, get_dick_size))
 
-def gelbooru_search(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
+
+@logging_decorator('dick')
+def get_dick_size(bot, update):
     random.seed(update.message.from_user.id)
     size = random.gauss(mu, sigma)
     msg_text = 'Длина Вашего члена {} см.'.format(size)
-    update.message.reply_text(msg_text, parse_mode="Markdown")
-    print(current_time, ">", "/dick", ">", update.message.from_user.username)
-    log_command(bot, update, current_time, "dick")
+    update.message.reply_text(msg_text)

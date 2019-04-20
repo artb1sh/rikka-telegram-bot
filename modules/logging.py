@@ -14,6 +14,23 @@ def module_init(gd):
     c = conn.cursor()
 
 
+def logging_decorator(command_name):
+    def decorator(func):
+        def wrapper(bot, update, *args, **kwargs):
+            current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
+            func(bot, update, *args, **kwargs)
+            print(
+                "{} > /{} > {}".format(
+                    current_time,
+                    command_name,
+                    update.message.from_user.username
+                )
+            )
+            log_command(bot, update, current_time, command_name)
+        return wrapper
+    return decorator
+
+
 def data_entry(table, entry_columns, values):
     values_count = ("?, "*len(values))[:-2]
     db_lock.acquire()
