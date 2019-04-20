@@ -116,7 +116,7 @@ def text_filter(text):
     return lambda msg: bool(text in msg.text)
 
 
-def convert_2ch_post_to_telegram(post):
+def convert_2ch_post_to_telegram(post, thread_link=None):
     files = post['files']
     comment_text = html2text(post['comment'])
     links = map(lambda file: "[file](https://2ch.hk{})".format(file['path']),
@@ -125,12 +125,14 @@ def convert_2ch_post_to_telegram(post):
     name = post['name']
     num = post['num']
     number = post['number']
-    message_text = '{files}\n{name} {date} *№{num}* _#{number}_\n\n{text}'.format(
+    post_link = '{}#{}'.format(thread_link, num) if thread_link is not None else ''
+    message_text = '{files}\n{name} {date} *№*[{num}]({post_link}) _#{number}_\n\n{text}'.format(
         name=name,
         date=date,
         num=num,
         number=number,
         text=comment_text,
-        files=' '.join(links)
+        files=' '.join(links),
+        post_link=post_link,
     )
     return message_text

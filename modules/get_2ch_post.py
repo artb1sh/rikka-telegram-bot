@@ -1,7 +1,6 @@
 from modules.logging import logging_decorator
 from .utils import convert_2ch_post_to_telegram
 from telegram.ext import CommandHandler
-from html2text import html2text
 import requests
 import random
 
@@ -32,5 +31,11 @@ def get_2ch_post(bot, update, args):
     )
     posts_list = top_thread_response.json()['threads'][0]['posts']
     post = random.choice(posts_list)
-    message_text = convert_2ch_post_to_telegram(post)
-    update.message.reply_text(message_text, parse_mode='Markdown')
+    thread_link = 'https://2ch.hk/{}/res/{}.html'.format(board, top_thread_num)
+    message_text = convert_2ch_post_to_telegram(post, thread_link=thread_link)
+    has_files = message_text.startswith('[file](')
+    update.message.reply_text(
+        message_text,
+        parse_mode='Markdown',
+        disable_web_page_preview=(not has_files),
+    )
