@@ -1,6 +1,6 @@
 from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 from telegram.ext.dispatcher import run_async
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from datetime import datetime
 import random
 import os
@@ -29,8 +29,8 @@ def get_storage_dir_path(chat_id):
 
 
 @run_async
+@logging_decorator('gif')
 def gif(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     storage_dir_path = get_storage_dir_path(update.message.chat.id)
     if not os.path.exists(storage_dir_path):
         update.message.reply_text("I don't know any gifs!")
@@ -38,4 +38,3 @@ def gif(bot, update, args):
     result_path = os.path.join(storage_dir_path, random.choice(files))
     with open(result_path, "rb") as f:
         update.message.reply_document(f)
-    log_command(bot, update, current_time, "gif")
