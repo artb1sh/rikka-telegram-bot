@@ -54,7 +54,7 @@ def kekify(update, kek_param, filename, extension):
         return result
     try:
         kek_dict = get_values(kek_param, path, filename, extension)
-        cut = "convert " + path + filename + extension + " -crop " + kek_dict[0] + " " + path + "result" + extension
+        cut = "convert " + path + filename + extension + " -crop " + kek_dict[0] + " " + path + "result-0" + extension
         subprocess.run(cut, shell=True)
         mirror = "convert " + kek_dict[1] + " " + kek_dict[4] + " " + kek_dict[2]
         subprocess.run(mirror, shell=True)
@@ -66,7 +66,7 @@ def kekify(update, kek_param, filename, extension):
         os.remove(path+"result-0"+extension)
         os.remove(path+"result-1"+extension)
         return result
-    except:
+    except Exception as e:
         update.message.reply_text("Unknown kek parameter.\nUse -l, -r, -t, -b or -m")
         return
 
