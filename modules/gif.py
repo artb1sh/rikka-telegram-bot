@@ -11,7 +11,7 @@ def module_init(gd):
     path = gd.config["path"]
     commands = gd.config["commands"]
     for command in commands:
-        gd.dp.add_handler(CommandHandler(command, gif, pass_args=True))
+        gd.dp.add_handler(CommandHandler(command, gif))
     gd.dp.add_handler(MessageHandler(Filters.animation, save_gif))
 
 
@@ -31,7 +31,7 @@ def get_storage_dir_path(chat_id):
 
 @run_async
 @logging_decorator('gif')
-def gif(bot, update, args):
+def gif(bot, update):
     storage_dir_path = get_storage_dir_path(update.message.chat.id)
     if not os.path.exists(storage_dir_path):
         update.message.reply_text("I don't know any gifs!")

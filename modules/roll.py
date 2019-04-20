@@ -1,7 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from telegram.ext import CommandHandler
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from random import randint, seed
 from datetime import datetime
 
@@ -73,8 +71,8 @@ def dice(update, number1, number2):
         return True
 
 
+@logging_decorator('roll')
 def roll(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     if update.message.reply_to_message is not None:
         args = update.message.reply_to_message.text.split(" ")
     full_text = ' '.join(args)
@@ -87,5 +85,3 @@ def roll(bot, update, args):
         rolling_process(update, full_text, split_text)
     else:
         mysteryball(update, full_text)
-    print(current_time, ">", "/roll", ">", update.message.from_user.username)
-    log_command(bot, update, current_time, "roll")

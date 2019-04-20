@@ -1,9 +1,7 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from telegram.ext.dispatcher import run_async
 from telegram.ext import CommandHandler
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from telegram import ChatAction
 from datetime import datetime
 from pybooru import Moebooru
@@ -35,8 +33,8 @@ def get_anime(update, query, filename):
 
 
 @run_async
+@logging_decorator('yandere')
 def yandere_search(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     filename = datetime.now().strftime("%d%m%y-%H%M%S%f")
     if args == []:
         input_query = "rating:s"
@@ -46,10 +44,7 @@ def yandere_search(bot, update, args):
         cap = get_anime(update, input_query, filename)
         with open(path + filename + ".jpg", "rb") as f:
             update.message.reply_photo(f, caption=cap)
-        print (current_time, "> /yandere", input_query, ">", update.message.from_user.username)
     except:
         cap = get_anime(update, "rating:s", filename)
         with open(path + filename + ".jpg", "rb") as f:
             update.message.reply_photo(f, caption="Nothing found, here's one random pic:\n" + cap)
-        print (current_time,"> /yandere not found:", input_query, ", sent random", ">", update.message.from_user.username)
-    log_command(bot, update, current_time, "yandere")

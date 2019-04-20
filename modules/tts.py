@@ -1,7 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from telegram.ext import CommandHandler
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from telegram import ChatAction
 from datetime import datetime
 from gtts import gTTS
@@ -16,8 +14,8 @@ def module_init(gd):
         gd.dp.add_handler(CommandHandler(command, tts, pass_args=True))
 
 
+@logging_decorator('say')
 def tts(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     filename = datetime.now().strftime("%d%m%y-%H%M%S%f")
     reply = update.message.reply_to_message
     lang = 'ru'
@@ -55,6 +53,4 @@ def tts(bot, update, args):
         tts.save(path + filename + ".mp3")
     with open(path + filename + ".mp3", "rb") as speech:
         update.message.reply_voice(speech, quote=False)
-    print(current_time, ">", "/say", ">", update.message.from_user.username)
     os.remove(path+filename+".mp3")
-    log_command(bot, update, current_time, "say")
