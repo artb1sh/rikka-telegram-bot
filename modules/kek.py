@@ -7,6 +7,7 @@ from telegram import ChatAction
 from datetime import datetime
 import subprocess
 import os
+from PIL import Image, ImageOps
 
 
 def module_init(gd):
@@ -48,27 +49,37 @@ def kek(bot, update):
 
 
 # kek process + send
-def kekify(update, kek_param, filename, extension):
+def kekify(update, kek_param, basename, extension):
     if kek_param == "-m":
-        result = multikek(update, filename, extension)
+        result = multikek(update, basename, extension)
         return result
-    try:
-        kek_dict = get_values(kek_param, path, filename, extension)
-        cut = "convert " + path + filename + extension + " -crop " + kek_dict[0] + " " + path + "result-0" + extension
-        subprocess.run(cut, shell=True)
-        mirror = "convert " + kek_dict[1] + " " + kek_dict[4] + " " + kek_dict[2]
-        subprocess.run(mirror, shell=True)
-        if kek_dict[3] == "r":
-            kek_dict[1], kek_dict[2] = kek_dict[2], kek_dict[1]
-        append = "convert " + kek_dict[1] + " " + kek_dict[2] + " " + kek_dict[5] + " " + path + kek_dict[6] + extension
-        subprocess.run(append, shell=True)
-        result = kek_dict[6]
-        os.remove(path+"result-0"+extension)
-        os.remove(path+"result-1"+extension)
-        return result
-    except Exception as e:
-        update.message.reply_text("Unknown kek parameter.\nUse -l, -r, -t, -b or -m")
+    filename = os.path.join(path, basename+extension)
+    img = Image.open(filename)
+    width, height = img.size
+    if kek_param in ['-l', '']:
+        half = img.crop((0, 0, width//2, height))
+        mirrored_copy = ImageOps.mirror(half)
+        result = horizontal_concat(half, mirrored_copy)
+    elif kek_param == '-r':
+        half = img.crop((width//2, 0, width, height))
+        mirrored_copy = ImageOps.mirror(half)
+        result = horizontal_concat(mirrored_copy, half)
+    elif kek_param == '-t':
+        half = img.crop((0, 0, width, height//2))
+        mirrored_copy = ImageOps.flip(half)
+        result = vertical_concat(half, mirrored_copy)
+    elif kek_param == '-b':
+        half = img.crop((0, height//2, width, height))
+        mirrored_copy = ImageOps.flip(half)
+        result = vertical_concat(mirrored_copy, half)
+    else:
+        update.message.reply_text(
+            "Unknown kek parameter.\nUse -l, -r, -t, -b or -m")
         return
+    result_basename = 'file_to_send'
+    result_filepath = os.path.join(path, result_basename + extension)
+    result.save(result_filepath)
+    return result_basename
 
 
 def multikek(update, filename, extension):
@@ -92,14 +103,37 @@ def multikek(update, filename, extension):
     return result
 
 
-def get_values(kek_param, path, filename, extension):
-    res1 = path + "result-0" + extension
-    res2 = path + "result-1" + extension
-    parameters = {
-        "":   ["50%x100%", res1, res2, "s", "-flop", "+append", filename+"-kek-left"],
-        "-l": ["50%x100%", res1, res2, "s", "-flop", "+append", filename+"-kek-left"],
-        "-r": ["50%x100%", res2, res1, "r", "-flop", "+append", filename+"-kek-right"],
-        "-t": ["100%x50%", res1, res2, "s", "-flip", "-append", filename+"-kek-top"],
-        "-b": ["100%x50%", res2, res1, "r", "-flip", "-append", filename+"-kek-bot"]
-        }
-    return parameters[kek_param]
+def vertical_concat(top, bottom):
+    top_width, top_height = top.size
+    bottom_width, bottom_height = bottom.size
+    if top_width == bottom_width:
+        width = bottom_width
+    else:
+        raise ValueError()
+    result_size = (width, top_height+bottom_height)
+    if top.mode == bottom.mode:
+        mode = top.mode
+    else:
+        raise ValueError()
+    result = Image.new(mode, result_size)
+    result.paste(top, (0, 0))
+    result.paste(bottom, (0, top_height))
+    return result
+
+
+def horizontal_concat(left, right):
+    left_width, left_height = left.size
+    right_width, right_height = right.size
+    if left_height == right_height:
+        height = left_height
+    else:
+        raise ValueError()
+    result_size = (left_width+right_width, height)
+    if left.mode == right.mode:
+        mode = left.mode
+    else:
+        raise ValueError()
+    result = Image.new(mode, result_size)
+    result.paste(left, (0, 0))
+    result.paste(right, (left_width, 0))
+    return result
