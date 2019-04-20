@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from modules.utils import caption_filter, get_image, send_image
 from telegram.ext import CommandHandler, MessageHandler
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from telegram import ChatAction
 from datetime import datetime
 import subprocess
@@ -21,8 +21,8 @@ def module_init(gd):
 
 
 # get image, pass parameter
+@logging_decorator('kek')
 def kek(bot, update):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     filename = datetime.now().strftime("%d%m%y-%H%M%S%f")
     if update.message.reply_to_message is not None:
         kek_param = "".join(update.message.text[5:7])
@@ -44,8 +44,6 @@ def kek(bot, update):
     send_image(update, path, result, extension)
     os.remove(path+result+extension)
     os.remove(path+filename+extension)
-    print(current_time, ">", "/kek", ">", update.message.from_user.username)
-    log_command(bot, update, current_time, "kek")
 
 
 # kek process + send

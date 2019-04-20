@@ -1,15 +1,12 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 from telegram.ext import CommandHandler
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from random import random, seed
-from datetime import datetime
 
 
 def module_init(gd):
     commands = gd.config["commands"]
     for command in commands:
-        gd.dp.add_handler(CommandHandler(command, rate, pass_args=True))
+        gd.dp.add_handler(CommandHandler(command, rate))
 
 
 def ifint(number):
@@ -20,13 +17,11 @@ def ifint(number):
         return number
 
 
-def rate(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
+@logging_decorator('rate')
+def rate(bot, update):
     if update.message.reply_to_message is not None:
         seed(update.message.reply_to_message.message_id)
     rng = random() * 10
     rounded = round(rng * 2) / 2
     rating = str(ifint(rounded))
     update.message.reply_text("🤔 I rate this "+rating+"/10")
-    print(current_time, ">", "/rate", ">", update.message.from_user.username)
-    log_command(bot, update, current_time, "rate")

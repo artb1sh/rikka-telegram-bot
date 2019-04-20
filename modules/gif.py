@@ -15,6 +15,7 @@ def module_init(gd):
     gd.dp.add_handler(MessageHandler(Filters.animation, save_gif))
 
 
+@run_async
 def save_gif(bot, update):
     message = update.message
     storage_dir_path = get_storage_dir_path(message.chat.id)
