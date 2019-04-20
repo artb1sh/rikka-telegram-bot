@@ -1,4 +1,4 @@
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from datetime import datetime
 from telegram.ext import CommandHandler
 from html2text import html2text
@@ -12,9 +12,8 @@ def module_init(gd):
         gd.dp.add_handler(CommandHandler(command, get_2ch_post, pass_args=True))
 
 
+@logging_decorator('2ch')
 def get_2ch_post(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
-    print(current_time, ">", "/2ch", ">", update.message.from_user.username)
     board = 'b'
     if args:
         board = args[0]
@@ -33,4 +32,3 @@ def get_2ch_post(bot, update, args):
     links = map(lambda file: "[file](https://2ch.hk{})".format(file['path']), files)
     message_text = '{}\n\n{}'.format(' '.join(links), comment_text)
     update.message.reply_text(message_text, parse_mode='Markdown')
-    log_command(bot, update, current_time, "2ch")

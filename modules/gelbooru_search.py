@@ -1,9 +1,8 @@
-from modules.logging import log_command
+from modules.logging import logging_decorator
 from telegram import ChatAction
 from telegram.ext import CommandHandler
 import requests
 import random
-from datetime import datetime
 
 
 def module_init(gd):
@@ -12,8 +11,8 @@ def module_init(gd):
         gd.dp.add_handler(CommandHandler(command, gelbooru_search, pass_args=True))
 
 
+@logging_decorator('gel')
 def gelbooru_search(bot, update, args):
-    current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
     update.message.chat.send_action(ChatAction.UPLOAD_PHOTO)
     query = ' '.join(args)
     try:
@@ -26,8 +25,6 @@ def gelbooru_search(bot, update, args):
         return
     msg_text = "[link]({})".format(final_img)
     update.message.reply_text(msg_text, parse_mode="Markdown")
-    print(current_time, ">", "/gel", ">", update.message.from_user.username)
-    log_command(bot, update, current_time, "gel")
 
 
 def get_image(query):
