@@ -29,7 +29,11 @@ class PostsObserver(threading.Thread):
                     self.conn.execute(query, (api_url,))
                     self.conn.commit()
                     continue
-                posts = api_response.json()['threads'][0]['posts']
+                try:
+                    posts = api_response.json()['threads'][0]['posts']
+                except Exception as e:
+                    print(e)
+                    continue
                 if posts[-1]['num'] <= last_post:
                     continue
                 updates = True
