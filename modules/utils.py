@@ -122,7 +122,7 @@ def convert_2ch_post_to_telegram(post, thread_link=None):
     links = map(lambda file: "[file](https://2ch.hk{})".format(file['path']),
                 files)
     date = post['date']
-    name = post['name']
+    name = html2text(post['name'])
     num = post['num']
     number = post['number']
     post_link = '{}#{}'.format(thread_link, num) if thread_link is not None else ''
