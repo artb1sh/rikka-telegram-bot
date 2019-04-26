@@ -21,7 +21,8 @@ class PostsObserver(threading.Thread):
     def run(self):
         while True:
             updates = False
-            for row in self.conn.execute('SELECT * FROM tracked').fetchall():
+            rows = self.conn.execute('SELECT * FROM tracked').fetchall()
+            for row in rows:
                 api_url, last_post, chat_id = row
                 api_response = requests.get(api_url)
                 if api_response.status_code == 404:

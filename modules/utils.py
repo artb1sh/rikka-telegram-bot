@@ -118,11 +118,11 @@ def text_filter(text):
 
 def convert_2ch_post_to_telegram(post, thread_link=None):
     files = post['files']
-    comment_text = html2text(post['comment'])
+    comment_text = html2text(post['comment']).replace('*', r'\*').replace('_', r'\_')
     links = map(lambda file: "[file](https://2ch.hk{})".format(file['path']),
                 files)
     date = post['date']
-    name = html2text(post['name'])
+    name = post['name']
     num = post['num']
     number = post['number']
     post_link = '{}#{}'.format(thread_link, num) if thread_link is not None else ''
