@@ -6,52 +6,55 @@ import requests
 import threading
 import sqlite3
 import time
-from datetime import datetime
+import logging
 import re
 
 
 class PostsObserver(threading.Thread):
 
-    def __init__(self, bot, conn, interval=10):
+    def __init__(self, bot, conn, interval=10, logger=None):
         super().__init__()
         self.conn = conn
         self.bot = bot
         self.interval = interval
+        self.logger = logger if logger is not None else logging.getLogger()
 
     def run(self):
         while True:
-            updates = False
-            rows = self.conn.execute('SELECT * FROM tracked').fetchall()
-            for row in rows:
-                api_url, last_post, chat_id = row
-                api_response = requests.get(api_url)
-                if api_response.status_code == 404:
-                    query = 'DELETE FROM tracked WHERE api_url=?'
-                    self.conn.execute(query, (api_url,))
-                    self.conn.commit()
-                    continue
-                try:
+            try:
+                updates = False
+                rows = self.conn.execute('SELECT * FROM tracked').fetchall()
+                for row in rows:
+                    api_url, last_post, chat_id = row
+                    api_response = requests.get(api_url)
+                    if api_response.status_code == 404:
+                        query = 'DELETE FROM tracked WHERE api_url=?'
+                        self.conn.execute(query, (api_url,))
+                        self.conn.commit()
+                        continue
                     posts = api_response.json()['threads'][0]['posts']
-                except Exception as e:
-                    print(e)
-                    continue
-                if posts[-1]['num'] <= last_post:
-                    continue
-                updates = True
-                new_posts = [post for post in posts if post['num'] > last_post]
-                last_post = new_posts[-1]['num']
-                query = 'UPDATE tracked SET last_post=? WHERE api_url=? and chat_id=?'
-                self.conn.execute(query, (last_post, api_url, chat_id))
-                self.conn.commit()
-                for post in new_posts:
-                    message_text = convert_2ch_post_to_telegram(
-                        post,
-                    )
-                    try:
-                        self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
-                    except Exception as e:
-                        print(e)
-            if not updates:
+                    if posts[-1]['num'] <= last_post:
+                        continue
+                    updates = True
+                    new_posts = [post for post in posts if post['num'] > last_post]
+                    last_post = new_posts[-1]['num']
+                    query = 'UPDATE tracked SET last_post=? WHERE api_url=? and chat_id=?'
+                    self.conn.execute(query, (last_post, api_url, chat_id))
+                    self.conn.commit()
+                    for post in new_posts:
+                        message_text = convert_2ch_post_to_telegram(
+                            post,
+                        )
+                        try:
+                            self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
+                        except Exception as e:
+                            self.logger.error(
+                                'Cannot send message:\n~~~\n{}\n~~~'.format(message_text),
+                                exc_info=True)
+                if not updates:
+                    time.sleep(self.interval)
+            except Exception as e:
+                self.logger.error('Unhandled exception', exc_info=True)
                 time.sleep(self.interval)
 
 
@@ -67,7 +70,19 @@ def module_init(gd):
     for command in commands:
         gd.dp.add_handler(
             CommandHandler(command, track, pass_args=True))
-    observer = PostsObserver(dp.bot, conn)
+    logger = logging.getLogger('track')
+    logger.setLevel(logging.DEBUG)
+    error_fh = logging.FileHandler('track.error.log')
+    error_fh.setLevel(logging.ERROR)
+    debug_fh = logging.FileHandler('track.debug.log')
+    debug_fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    error_fh.setFormatter(formatter)
+    debug_fh.setFormatter(formatter)
+    logger.addHandler(error_fh)
+    logger.addHandler(debug_fh)
+    observer = PostsObserver(dp.bot, conn, logger=logger)
     observer.start()
 
 
