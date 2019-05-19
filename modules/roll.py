@@ -1,7 +1,7 @@
 from telegram.ext import CommandHandler
 from modules.logging import logging_decorator
 from random import randint, seed
-from datetime import datetime
+import re
 
 choices = ["It is certain", "It is decidedly so", "Without a doubt", "Yes definitely",
            "You may rely on it", "As I see it, yes", "Most likely", "Outlook good",
@@ -62,19 +62,14 @@ def numbers_check(update, text):
 
 def dice(update, number1, number2):
     if number1 is not None and number2 is not None:
-        if number1 > number2:
-            tmp = number1
-            number1 = number2
-            number2 = tmp
+        number1, number2 = sorted([number1, number2])
         random_number = randint(number1, number2)
-        update.message.reply_text("🎲 " + str(random_number))
+        update.message.reply_text("🎲 {}".format(random_number))
         return True
 
 
 @logging_decorator('roll')
 def roll(bot, update, args):
-    if update.message.reply_to_message is not None:
-        args = update.message.reply_to_message.text.split(" ")
     full_text = ' '.join(args)
     rng_start, rng_end = numbers_check(update, full_text)
     if dice(update, rng_start, rng_end):
