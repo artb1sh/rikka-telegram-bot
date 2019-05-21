@@ -81,7 +81,7 @@ def meme(bot, update):
     update.message.chat.send_action(ChatAction.UPLOAD_PHOTO)
     try:
         extension = get_image(bot, update, path, filename)
-    except:
+    except IndexError as e:
         update.message.reply_text("Can't get the image! :(")
         return
     if extension not in extensions:
