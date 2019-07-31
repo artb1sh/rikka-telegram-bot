@@ -19,7 +19,7 @@ def gelbooru_search(bot, update, args):
         final_img = get_image(query)
     except:
         update.message.reply_text("Sorry, случилась какая-то жопа!")
-        return
+        raise
     if final_img is None:
         update.message.reply_text("Nothing found!")
         return
