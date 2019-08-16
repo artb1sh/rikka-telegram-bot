@@ -7,8 +7,9 @@ import os
 import re
 import logging
 import daemon
+import requests
 
-proxy = 'https://149.56.102.220:3128'
+proxy = 'https://54.39.53.104:3128'
 os.environ['HTTP_PROXY'] = proxy
 os.environ['HTTPS_PROXY'] = proxy
 
@@ -33,6 +34,9 @@ with open("config.example.yml", "r") as f:
 key = config["keys"]["telegram_token"]
 updater = Updater(token=key)
 dp = updater.dispatcher
+bot_id = requests.get('https://api.telegram.org/bot{}/getMe'.format(key)).json()['result']['id']
+
+
 
 for feature in config["features"]:
     if "path" in config["features"][feature]:
@@ -41,6 +45,7 @@ for feature in config["features"]:
             os.makedirs(path)
     if config["features"][feature]["enabled"] is True:
         module_config = config["features"][feature]
+        module_config['bot_id'] = bot_id
         global_data = gd = Globals(updater, dp, module_config)
         module = importlib.import_module("modules." + feature).module_init(gd)
         print(feature)
