@@ -87,7 +87,6 @@ def meme(bot, update):
     if extension not in extensions:
         update.message.reply_text("Unsupported file, onii-chan!")
         return
-
     top_text, bottom_text = text_format(update, split_text)
     make_meme(top_text, bottom_text, filename, extension, path, font)
     update.message.chat.send_action(ChatAction.UPLOAD_PHOTO)

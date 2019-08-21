@@ -1,5 +1,5 @@
 keys:
-     telegram_token: '811544504:AAG0KVEUQvjlf4j_JQHI7y5VHlW2LALs6w0'
+     telegram_token: '-----------key---------------'
 
 features:
     bing_search:
@@ -8,12 +8,16 @@ features:
             - img
         safe_search: 'Off'
         search_depth: 10
-        subscription_key: e210201a31ca461ab90ab9d6651cc503
+        subscription_key: '---------key---------'
 
     get_2ch_post:
         enabled: true
         commands:
             - 2ch
+        default_board: b
+        cookies:
+            usercode_auth: '----------key----------'
+            ageallow: '1'
 
     dick:
         enabled: true
@@ -23,8 +27,14 @@ features:
         mu: 15
         sigma: 3
 
+    delete:
+        enabled: true
+        commands:
+            - del
+
     gelbooru_search:
         enabled: true
+        default_rating: safe
         commands:
             - gel
 
@@ -47,13 +57,10 @@ features:
             - .webp
 
     google_search:
-        enabled: false
-        commands_image: 
-            - img
-        commands_video: 
-            - vid
-        google_dev_key: =====key=====
-        google_cse_id: =====key=====
+        enabled: true
+        commands:
+            - g
+        subscription_key: '-------key--------'
 
     graphs:
         enabled: true
