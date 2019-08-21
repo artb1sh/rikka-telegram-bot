@@ -6,6 +6,8 @@ import random
 
 
 def module_init(gd):
+    global default_rating
+    default_rating = gd.config['default_rating']
     commands = gd.config["commands"]
     for command in commands:
         gd.dp.add_handler(CommandHandler(command, gelbooru_search, pass_args=True))
@@ -13,6 +15,8 @@ def module_init(gd):
 
 @logging_decorator('gel')
 def gelbooru_search(bot, update, args):
+    if not any(arg.startswith('rating:') for arg in args):
+        args = args + ['rating:{}'.format(default_rating)]
     update.message.chat.send_action(ChatAction.UPLOAD_PHOTO)
     query = ' '.join(args)
     try:
