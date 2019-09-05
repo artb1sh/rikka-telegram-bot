@@ -28,7 +28,7 @@ def gelbooru_search(bot, update, args):
         update.message.reply_text("Nothing found!")
         return
     post_link = 'https://gelbooru.com/index.php?page=post&s=view&id={}'.format(id_)
-    msg_text = "[img]({})\n\n[post]({})".format(final_img, post_link)
+    msg_text = "[img]({}) [post]({})".format(final_img, post_link)
     update.message.reply_text(msg_text, parse_mode="Markdown")
 
 
