@@ -28,7 +28,7 @@ def gelbooru_search(bot, update, args):
         update.message.reply_text("Nothing found!")
         return
     post_link = 'https://gelbooru.com/index.php?page=post&s=view&id={}'.format(id_)
-    msg_text = "[img]({})\n\n{}".format(final_img, post_link)
+    msg_text = "[img]({})\n\n[post]{}".format(final_img, post_link)
     update.message.reply_text(msg_text, parse_mode="Markdown")
 
 
@@ -42,10 +42,10 @@ def get_image(query):
     }
     response = requests.get('https://gelbooru.com/index.php', params=params)
     if not response.text:
-        return None
+        return None, None
     result_list = response.json()
     if not result_list:
-        return None
+        return None, None
     post = random.choice(result_list)
     link = post.get('file_url')
     id_ = post.get('id')

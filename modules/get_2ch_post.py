@@ -39,3 +39,8 @@ def get_2ch_post(bot, update, args):
         parse_mode='Markdown',
         disable_web_page_preview=(not has_files),
     )
+
+
+@logging_decorator('2ch')
+def send_2ch_post(bot, update, args):
+    post_text = None

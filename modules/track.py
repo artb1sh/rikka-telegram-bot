@@ -19,6 +19,36 @@ class PostsObserver(threading.Thread):
         self.interval = interval
         self.logger = logger if logger is not None else logging.getLogger()
 
+    def add_thread(self, url, chat_id, timeout=3):
+        board = re.search(r'\w+(?=/res/)', url).group(0)
+        thread_num = int(re.search(r'\w+(?=\.html$)', url).group(0))
+        api_url = 'https://2ch.hk/{}/res/{}.json'.format(board, thread_num)
+        response = requests.get(api_url, timeout=timeout)
+        response.raise_for_status()
+        last_post = response.json()['threads'][0]['posts'][-1]['num']
+        self.conn.execute(
+            "INSERT INTO tracked (api_url, last_post, chat_id) VALUES (?,?,?)",
+            (api_url, last_post, chat_id))
+        self.conn.commit()
+
+    def delete_thread(self, api_url, chat_id):
+        query = 'DELETE FROM tracked WHERE api_url=? and chat_id=?'
+        self.conn.execute(query, (api_url, chat_id))
+        self.conn.commit()
+
+    def get_new_posts(self, api_url, last_post):
+        api_response = requests.get(api_url)
+        if api_response.status_code == 404:
+            self.logger.info(
+                '404 responce for thread {}'.format(api_url))
+            query = 'DELETE FROM tracked WHERE api_url=?'
+            self.conn.execute(query, (api_url,))
+            self.conn.commit()
+            return None
+        posts = api_response.json()['threads'][0]['posts']
+        new_posts = [post for post in posts if post['num'] > last_post]
+        return new_posts
+
     def run(self):
         while True:
             try:
@@ -26,24 +56,19 @@ class PostsObserver(threading.Thread):
                 rows = self.conn.execute('SELECT * FROM tracked').fetchall()
                 for row in rows:
                     api_url, last_post, chat_id = row
-                    api_response = requests.get(api_url)
-                    if api_response.status_code == 404:
-                        query = 'DELETE FROM tracked WHERE api_url=?'
-                        self.conn.execute(query, (api_url,))
-                        self.conn.commit()
+                    thread_url = api_url[:-4] + 'html'
+                    new_posts = self.get_new_posts(api_url, last_post)
+                    if new_posts is None:
+                        self.delete_thread(api_url, chat_id)
+                        message_text = ('Тред {} был удален и больше'
+                                        ' не отслеживается!')
+                        self.bot.send_message(chat_id,
+                                              message_text.format(thread_url))
                         continue
-                    posts = api_response.json()['threads'][0]['posts']
-                    if posts[-1]['num'] <= last_post:
-                        continue
-                    updates = True
-                    new_posts = [post for post in posts if post['num'] > last_post]
-                    last_post = new_posts[-1]['num']
-                    query = 'UPDATE tracked SET last_post=? WHERE api_url=? and chat_id=?'
-                    self.conn.execute(query, (last_post, api_url, chat_id))
-                    self.conn.commit()
                     for post in new_posts:
                         message_text = convert_2ch_post_to_telegram(
                             post,
+                            thread_link=thread_url,
                         )
                         try:
                             self.bot.send_message(chat_id, message_text, parse_mode='Markdown')
@@ -59,7 +84,7 @@ class PostsObserver(threading.Thread):
 
 
 def module_init(gd):
-    global c, conn, db_lock, dp
+    global c, conn, db_lock, dp, observer
     db_lock = threading.Lock()
     dp = gd.dp
     path = gd.config["path"]
@@ -76,10 +101,6 @@ def module_init(gd):
     error_fh.setLevel(logging.ERROR)
     debug_fh = logging.FileHandler('track.debug.log')
     debug_fh.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    error_fh.setFormatter(formatter)
-    debug_fh.setFormatter(formatter)
     logger.addHandler(error_fh)
     logger.addHandler(debug_fh)
     observer = PostsObserver(dp.bot, conn, logger=logger)
@@ -99,16 +120,16 @@ def track(bot, update, args):
         return
     if (update.effective_chat.type != 'private'
             and update.effective_chat.get_member(user_id).status not in ['administrator', 'creator']):
-        update.message.reply_text('Вы не администратор, чтобы указзывать мне!')
+        update.message.reply_text('Вы не администратор, чтобы указывать мне!')
         return
     url = args[0]
     try:
         board = re.search(r'\w+(?=/res/)', url).group(0)
         thread_num = int(re.search(r'\w+(?=\.html$)', url).group(0))
         api_url = 'https://2ch.hk/{}/res/{}.json'.format(board, thread_num)
-        response = requests.get(api_url, timeout=3)
+        response = requests.get(api_url)
         assert response.ok
-    except:
+    except Exception as e:
         update.message.reply_text('Тред не найден!')
         return
     last_post = response.json()['threads'][0]['posts'][-1]['num']
