@@ -20,14 +20,15 @@ def gelbooru_search(bot, update, args):
     update.message.chat.send_action(ChatAction.UPLOAD_PHOTO)
     query = ' '.join(args)
     try:
-        final_img = get_image(query)
+        final_img, id_ = get_image(query)
     except:
         update.message.reply_text("Sorry, случилась какая-то жопа!")
         raise
     if final_img is None:
         update.message.reply_text("Nothing found!")
         return
-    msg_text = "[link]({})".format(final_img)
+    post_link = 'https://gelbooru.com/index.php?page=post&s=view&id={}'.format(id_)
+    msg_text = "[img]({})\n\n{}".format(final_img, post_link)
     update.message.reply_text(msg_text, parse_mode="Markdown")
 
 
@@ -47,4 +48,5 @@ def get_image(query):
         return None
     post = random.choice(result_list)
     link = post.get('file_url')
-    return link
+    id_ = post.get('id')
+    return link, id_
