@@ -1,5 +1,5 @@
 keys:
-     telegram_token: '-----------key---------------'
+     telegram_token: '917003899:AAH5Z8XgK-08zaEvzcpaMfchajRrHVR05SI'
 
 features:
     bing_search:
@@ -16,7 +16,7 @@ features:
             - 2ch
         default_board: b
         cookies:
-            usercode_auth: '----------key----------'
+            usercode_auth: '42'
             ageallow: '1'
 
     dick:
