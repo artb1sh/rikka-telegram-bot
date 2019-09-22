@@ -170,7 +170,7 @@ features:
         path: userdata/nya/
         
     palette:
-        enabled: true
+        enabled: false
         commands:
             - palette
             - colors
