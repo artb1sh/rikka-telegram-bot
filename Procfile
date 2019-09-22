@@ -1,1 +1,1 @@
-web: python rikkabot.py
+bot: python rikkabot.py
