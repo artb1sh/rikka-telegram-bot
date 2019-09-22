@@ -82,6 +82,7 @@ dp.add_handler(CommandHandler("help", help))
 port = 8443
 updater.start_webhook(listen='0.0.0.0', bootstrap_retries=0, port=port, url_path=key,
                       cert='cert.pem', key='private.key')
+updater.bot.set_webhook("https://arcane-shelf-81433.herokuapp.com/" + key)
 print("=====================\nUp and running!\n")
 # Idle
 updater.idle()
