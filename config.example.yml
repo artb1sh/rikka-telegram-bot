@@ -7,7 +7,8 @@ features:
         commands:
             - img
         safe_search: 'Off'
-        search_depth: 10d54361e9d4454829814865eb32f3beb1
+        search_depth: 10
+        subscription_key: d54361e9d4454829814865eb32f3beb1
 
     get_2ch_post:
         enabled: true
