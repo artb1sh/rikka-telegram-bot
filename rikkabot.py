@@ -80,7 +80,7 @@ dp.add_handler(CommandHandler("help", help))
 
 # Starting bot
 port = os.environ.get('PORT', 5000)
-updater.start_webhook(clean=True, bootstrap_retries=0, port=port)
+updater.start_webhook(clean=True, bootstrap_retries=0, port=port, url_path=key)
 print("=====================\nUp and running!\n")
 # Idle
 updater.idle()
