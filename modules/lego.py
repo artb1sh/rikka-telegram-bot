@@ -15,7 +15,6 @@ def module_init(gd):
     extensions = gd.config["extensions"]
     commands = gd.config["commands"]
     for command in commands:
-        gd.dp.add_handler(MessageHandler(caption_filter("/"+command), lego))
         gd.dp.add_handler(CommandHandler(command, lego))
 
 

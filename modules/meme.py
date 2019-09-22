@@ -17,8 +17,7 @@ def module_init(gd):
     for i in gd.config["fonts"]:
         fonts_dict[gd.config["fonts"][i]["name"]] = gd.config["fonts"][i]["path"]
     for command in commands:
-        gd.dp.add_handler(MessageHandler(caption_filter("/"+command), meme))
-        gd.dp.add_handler(CommandHandler(commands, meme))
+        gd.dp.add_handler(CommandHandler(command, meme))
 
 
 def text_format(update, split_text):

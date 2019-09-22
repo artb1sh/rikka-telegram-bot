@@ -9,9 +9,11 @@ import logging
 import daemon
 import requests
 
+'''
 proxy = 'https://54.39.53.104:3128'
 os.environ['HTTP_PROXY'] = proxy
 os.environ['HTTPS_PROXY'] = proxy
+'''
 
 class Globals:
     def __init__(self, updater, dp, config):

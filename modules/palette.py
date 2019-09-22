@@ -17,7 +17,6 @@ def module_init(gd):
     commands = gd.config["commands"]
     extensions = gd.config["extensions"]
     for command in commands:
-        gd.dp.add_handler(MessageHandler(caption_filter("/"+command), palette))
         gd.dp.add_handler(CommandHandler(command, palette))
 
 
