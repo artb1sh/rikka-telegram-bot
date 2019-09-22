@@ -79,7 +79,8 @@ dp.add_handler(CommandHandler("help", help))
 
 
 # Starting bot
-updater.start_polling(clean=True, bootstrap_retries=0, read_latency=1.0)
+port = os.environ.get('PORT', 5000)
+updater.start_webhook(clean=True, bootstrap_retries=0, port=port)
 print("=====================\nUp and running!\n")
 # Idle
 updater.idle()
