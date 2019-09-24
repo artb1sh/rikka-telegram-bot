@@ -60,7 +60,7 @@ features:
         enabled: true
         commands:
             - g
-        subscription_key: '-------key--------'
+        subscription_key: 'd54361e9d4454829814865eb32f3beb1'
 
     graphs:
         enabled: true
