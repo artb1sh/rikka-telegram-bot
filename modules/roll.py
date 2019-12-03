@@ -37,7 +37,7 @@ def splitter_check(update, text):
 def rolling_process(update, split_text):
     randoms = tuple(sorted(split_text))
     seed(randoms)
-    answer = random.choice(split_text)
+    answer = random.choice(randoms)
     update.message.reply_text(answer)
 
 
