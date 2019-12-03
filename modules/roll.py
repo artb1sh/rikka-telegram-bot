@@ -1,6 +1,7 @@
 from telegram.ext import CommandHandler
 from modules.logging import logging_decorator
 from random import randint, seed
+import random
 import re
 
 choices = ["It is certain", "It is decidedly so", "Without a doubt", "Yes definitely",
@@ -33,13 +34,11 @@ def splitter_check(update, text):
             return splitter
 
 
-def rolling_process(update, full_text, split_text):
-    seed(full_text)
-    randoms = len(split_text) - 1
-    answer = randint(0, randoms)
-    uncapitalized = split_text[answer]
-    capitalized = uncapitalized[0].upper() + uncapitalized[1:]
-    update.message.reply_text("⚖️ " + capitalized)
+def rolling_process(update, split_text):
+    randoms = tuple(sorted(split_text))
+    seed(randoms)
+    answer = random.choice(split_text)
+    update.message.reply_text(answer)
 
 
 def numbers_check(update, text):
