@@ -76,6 +76,6 @@ def roll(bot, update, args):
     splitter = splitter_check(update, full_text)
     if splitter:
         split_text = full_text.split(splitter)
-        rolling_process(update, full_text, split_text)
+        rolling_process(update, split_text)
     else:
         mysteryball(update, full_text)
