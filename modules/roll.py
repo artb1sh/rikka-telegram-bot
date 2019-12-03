@@ -24,8 +24,9 @@ def module_init(gd):
 
 def mysteryball(update, string):
     seed() if string == "" else seed(string)
-    answer = randint(0, len(choices)-1)
-    update.message.reply_text("🎱 " + choices[answer])
+    answer = randint(0, 100)
+    reply_text = "{}, инфа {}%".format(string, answer)
+    update.message.reply_text(reply_text)
 
 
 def splitter_check(update, text):
