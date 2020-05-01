@@ -29,7 +29,7 @@ with open("resources/logo.txt", "r", encoding="UTF-8") as logo_file:
 with open("config.yml", "r") as f:
     config = yaml.load(f)
 key = config["keys"]["telegram_token"]
-updater = Updater(token=key)
+updater = Updater(token=key, use_context=True)
 dp = updater.dispatcher
 bot_id = requests.get('https://api.telegram.org/bot{}/getMe'.format(key)).json()['result']['id']
 
