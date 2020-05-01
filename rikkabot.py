@@ -78,9 +78,7 @@ dp.add_handler(CommandHandler("help", help))
 
 
 # Starting bot
-port = os.environ.get('PORT', 8443)
-updater.start_webhook(listen='0.0.0.0', bootstrap_retries=0, port=port, url_path=key)
-updater.bot.set_webhook("https://arcane-shelf-81433.herokuapp.com/" + key)
+updater.start_polling(clean=True, bootstrap_retries=0, read_latency=1.0)
 print("=====================\nUp and running!\n")
 # Idle
 updater.idle()
