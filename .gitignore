@@ -1,13 +1,10 @@
 .git/
 .vscode/
 /userdata/
-impact.ttf
-comic.ttf
-lobster.ttf
-config.yml
 *.ini
 *.db
 test.py
+config.yml
 
 
 # Byte-compiled / optimized / DLL files

@@ -9,11 +9,6 @@ import logging
 import daemon
 import requests
 
-'''
-proxy = 'https://54.39.53.104:3128'
-os.environ['HTTP_PROXY'] = proxy
-os.environ['HTTPS_PROXY'] = proxy
-'''
 
 class Globals:
     def __init__(self, updater, dp, config):
@@ -31,7 +26,7 @@ with open("resources/logo.txt", "r", encoding="UTF-8") as logo_file:
     logo = logo_file.read()
     print(logo)
 
-with open("config.example.yml", "r") as f:
+with open("config.yml", "r") as f:
     config = yaml.load(f)
 key = config["keys"]["telegram_token"]
 updater = Updater(token=key)
