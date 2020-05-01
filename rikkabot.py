@@ -28,6 +28,10 @@ with open("resources/logo.txt", "r", encoding="UTF-8") as logo_file:
 
 with open("config.yml", "r") as f:
     config = yaml.load(f)
+proxy = config['keys'].get('proxy')
+if proxy:
+    os.environ['HTTP_PROXY'] = proxy
+    os.environ['HTTPS_PROXY'] = proxy
 key = config["keys"]["telegram_token"]
 updater = Updater(token=key, use_context=True)
 dp = updater.dispatcher
