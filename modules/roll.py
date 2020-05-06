@@ -25,6 +25,7 @@ def module_init(gd):
 def mysteryball(update, string):
     if not string:
         update.message.reply_text("42")
+        return
     seed(string)
     answer = randint(0, 100)
     reply_text = "{}, инфа {}%".format(string, answer)
