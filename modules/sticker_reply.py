@@ -13,7 +13,7 @@ def module_init(gd):
 
 def sticker_rep(bot, update):
     current_time = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")
-    if update.effective_message.chat.type == "channel":
+    if update.message.chat.type == "channel":
         return
     for word in keywords:
         if word in update.message.text:

@@ -33,7 +33,7 @@ if proxy:
     os.environ['HTTP_PROXY'] = proxy
     os.environ['HTTPS_PROXY'] = proxy
 key = config["keys"]["telegram_token"]
-updater = Updater(token=key, use_context=True)
+updater = Updater(token=key)
 dp = updater.dispatcher
 bot_id = requests.get('https://api.telegram.org/bot{}/getMe'.format(key)).json()['result']['id']
 

@@ -2,7 +2,7 @@ legofy
 psutil
 opencv_python
 Pybooru
-python_telegram_bot
+python_telegram_bot==11.1.0
 uptime
 numpy
 requests[socks]
