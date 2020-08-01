@@ -38,7 +38,6 @@ dp = updater.dispatcher
 bot_id = requests.get('https://api.telegram.org/bot{}/getMe'.format(key)).json()['result']['id']
 
 
-
 for feature in config["features"]:
     if "path" in config["features"][feature]:
         path = config["features"][feature]["path"]
@@ -67,14 +66,18 @@ def start(bot, update):
     update.message.reply_text("Konnichiwa, " + personname + "! \nMy name is Takanashi Rikka desu! \
                               \nUse /help to see what I can do! :3", quote=False)
     print(datetime.datetime.now(), ">>>", "Done /start", ">>>", update.message.from_user.username)
-dp.add_handler(CommandHandler("start", start))
 
 
-# Show help
-def help(bot, update):
+dp.add_handler(CommandHandler("start", start), 1)
+
+
+def send_help(bot, update):
+    print('help..')
     bot.send_message(update.message.chat_id, help_text, parse_mode="Markdown")
     print(datetime.datetime.now(), ">>>", "Done /help", ">>>", update.message.from_user.username)
-dp.add_handler(CommandHandler("help", help))
+
+
+dp.add_handler(CommandHandler("help", send_help), 1)
 
 
 # Starting bot
