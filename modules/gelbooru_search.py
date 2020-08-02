@@ -8,6 +8,26 @@ import os
 import subprocess
 
 
+GIF_TO_MP4_OUTPARAMS = [
+    "-flags", "+global_header",
+    "-movflags", "faststart",
+    "-c:v", "libx264",
+    "-profile:v", "high",
+    "-bf", "0",
+    "-copyts",
+    "-avoid_negative_ts", "disabled",
+    "-correct_ts_overflow", "0",
+    "-pix_fmt", "yuv420p",
+    "-color_primaries", "bt709",
+    "-color_trc", "iec61966_2_1",
+    "-colorspace", "bt470bg",
+    "-color_range", "tv",
+    "-qp", "18",
+    "-preset", "veryslow",
+    "-lavfi", "scale=if(gt(iw\,ih)\,min(448\,floor((iw+1)/2)*2)\,-2):if(gt(iw\,ih)\,-2\,min(448\,floor((ih+1)/2)*2)):out_color_matrix=bt601:out_range=tv:flags=accurate_rnd+full_chroma_inp+full_chroma_int+bicublin",
+]
+
+
 def module_init(gd):
     global default_rating
     default_rating = gd.config['default_rating']
@@ -44,7 +64,11 @@ def gelbooru_search(bot, update, args):
         print(r.headers['content-type'])
         print(r.encoding)
     if ext in ['.gif', '.webm']:
-        subprocess.call(['ffmpeg', '-i', filename, '-y', '-vf', "scale='min(100,iw)':'-1'", 'gelbooru.mp4'])
+        if ext == '.gif':
+            args = ['ffmpeg', '-i', filename] + GIF_TO_MP4_OUTPARAMS + ['gelbooru.mp4', '-y']
+            subprocess.call(args)
+        elif ext == '.mp4':
+            subprocess.call(['ffmpeg', '-i', filename, '-o', '-y', 'gelbooru.mp4'])
         filename = 'gelbooru.mp4'
         ext = '.mp4'
     with open(filename, 'rb') as tf:
