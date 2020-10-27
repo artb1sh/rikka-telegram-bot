@@ -26,7 +26,7 @@ def image_search(bot, update, args):
     try:
         final_img = get_image(query)
     except:
-        update.message.reply_text("Sorry, случилась какая-то жопа!")
+        update.message.reply_text(f"Sorry, случилась какая-то жопа!\nQuery: {query}")
         return
     if final_img is None:
         update.message.reply_text("Nothing found!")
