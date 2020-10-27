@@ -1,4 +1,4 @@
-from azure.cognitiveservices.search.imagesearch import ImageSearchAPI
+from azure.cognitiveservices.search.imagesearch import ImageSearchClient
 from msrest.authentication import CognitiveServicesCredentials
 from modules.logging import logging_decorator
 from telegram import ChatAction
@@ -36,7 +36,7 @@ def image_search(bot, update, args):
 
 
 def get_image(query):
-    client = ImageSearchAPI(CognitiveServicesCredentials(subscription_key))
+    client = ImageSearchClient(CognitiveServicesCredentials(subscription_key))
     image_results = client.images.search(query=query, safe_search=safe_search)
     if not image_results.value:
         return None
